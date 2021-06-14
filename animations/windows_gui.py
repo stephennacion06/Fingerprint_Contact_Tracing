@@ -40,36 +40,6 @@ class ImageLabel(tk.Label):
             self.after(self.delay, self.next_frame)
 
 
-def register_window():
-    root = tk.Toplevel(bg="black")
-    root.geometry("1024x350+0+50")
-    root.overrideredirect(1)
-    # root = tk.Tk()
-    lbl = ImageLabel(root)
-    lbl.pack()
-    lbl.load('animations/ready_for_scan.gif')
-    
-    label_instruction = tk.Label(root, text="Place your finger on the fingerprint sensor for 5 times", 
-                                 bg="black", fg="white")
-    Font_tuple = ("Modern", 15, "bold")
-    label_instruction.config(font = Font_tuple)
-    label_instruction.pack()
-    
-    # root.mainloop()
 
-def login_window():
-    root = tk.Toplevel(bg="black")
-    root.geometry("1024x350+0+50")
-    root.overrideredirect(1)
-    # root = tk.Tk()
-    lbl = ImageLabel(root)
-    lbl.pack()
-    lbl.load('animations/ready_for_scan.gif')
-    
-    label_instruction = tk.Label(root, text="Place your finger on the fingerprint sensor", 
-                                 bg="black", fg="white")
-    Font_tuple = ("Modern", 15, "bold")
-    label_instruction.config(font = Font_tuple)
-    label_instruction.pack()
 
 # register_window()

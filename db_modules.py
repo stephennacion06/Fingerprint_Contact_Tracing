@@ -194,4 +194,57 @@ def get_list_fingerprint():
             sqliteConnection.close()
             return tuple(record)
 
-# start_table()
+def update_location(id,location):
+    
+    try:
+        sqliteConnection = sqlite3.connect(db_name)
+        cursor = sqliteConnection.cursor()
+
+        sqlite_select_query = """SELECT location_record from Contact where id = {}""".format(id)
+        cursor.execute(sqlite_select_query)
+        records = cursor.fetchall()
+        
+        
+        def Convert(string):
+            li = list(string.split("~"))
+            return li
+        
+        def listToString(s): 
+    
+            # initialize an empty string
+            str1 = "~" 
+            
+            # return string  
+            return (str1.join(s))
+        
+        location_list = Convert(records[0][0])
+        
+        
+        if location not in location_list:
+            
+            print("Updating Location")
+            
+            location_list.append(location)    
+            location_string = listToString(location_list)
+        
+            sqlite_update_query = """Update Contact set location_record = '{}' where id = {}""".format(location_string,id)
+            cursor.execute(sqlite_update_query)
+            sqliteConnection.commit()
+        
+        print("Updating Time in")
+        
+        sqlite_update_query = """Update Contact set date = '{}' where id = {}""".format(datetime.datetime.now(),id)
+        cursor.execute(sqlite_update_query)
+        sqliteConnection.commit()
+
+
+        cursor.close()
+
+    except sqlite3.Error as error:
+        print("Failed to read data from sqlite table", error)
+    finally:
+        if sqliteConnection:
+            sqliteConnection.close()
+            print("The SQLite connection is closed")
+
+    

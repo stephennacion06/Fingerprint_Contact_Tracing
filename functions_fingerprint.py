@@ -6,7 +6,7 @@ import datetime
 import os
 
 
-os.system("sudo chmod a+rw /dev/bus/usb/001/004")
+os.system("sudo chmod a+rw /dev/bus/usb/001/003")
 
 # fingerprint = convertToBinaryData("some_fingerprint.bin")
 
@@ -19,10 +19,10 @@ def enroll_fingerprint():
         # Choose the first one
         # dev: fprint.Device
         dev = ddevs[0].open_device()
-        print("Done Here")
+        
         # print_data: Optional[fprint.PrintData]
         print_data = dev.enroll_finger_loop()
-        print("These is here")
+        
         if print_data is None:
             print("Fail")
         else:
@@ -86,18 +86,44 @@ def verify_fingerprint():
         matched, i, num = dev.identify_finger_img(fingerprint_list)
         
         if num != None:
+            dev.close()
+
+            fprint.exit()
+            
             personal_data = get_fingerprint_data(num+1)
             print("-"*20,"WELCOME! ",personal_data[0],"-"*20)
             print(personal_data)
+            return personal_data[0],num+1
             
         else:
-            print("Please Register First!")
 
-        dev.close()
+            dev.close()
 
-        fprint.exit()
+            fprint.exit()
+            
+            return False
 
+# def enroll_fingerprint(name, email, address, gender, phone,  location_record):
+    
+#     try:
+        
+#         enroll_fingerprint()
+        
+#         fingerprint = convertToBinaryData("fingerprint_data.bin")
+        
+#         insertdata(name, email, address, gender, phone, 
+#                 location_record, datetime.datetime.now(), fingerprint)
+        
+#         return True
+    
+#     except:
+        
+#         return False
+        
+    
+    
+    
 
-enroll_prompt()
+# enroll_prompt()
 
-verify_fingerprint()
+#verify_fingerprint()

@@ -2,23 +2,33 @@ from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as font
+from tkinter import messagebox
 
 from animations.windows_gui import ImageLabel
 
-import time
-from threading import *
+import threading
+
 # Function for clearing the
 # contents of text entry boxes
+from db_modules import convertToBinaryData, insertdata, update_location
+                        
+from functions_fingerprint import enroll_fingerprint, verify_fingerprint
 
+import datetime
+
+import os 
+
+import time
+import subprocess as sp
 
 root_win = None
 
 
 
-def timer_window():
-    # Call work function
-    t1=Thread(target=work)
-    t1.start()
+#Edit node_location.txt for each Node Devices
+with open('node_location.txt') as f:
+    location = f.readline()
+    
   
 # work function
 def work():
@@ -26,7 +36,7 @@ def work():
     
     print("sleep time start")
   
-    for i in range(5):
+    for i in range(60):
         print(i)
         time.sleep(1)
     
@@ -34,6 +44,28 @@ def work():
     root_win.update()
     
     print("sleep time stop")
+
+
+    
+
+def login_f():
+    global root_win
+    messagebox.showinfo("LOGIN", "Place your finger on the fingerprint sensor")
+    name,id = verify_fingerprint()
+    
+    update_location(id,location)
+    
+    if name is False:
+        
+        message = "Fingerprint not recognized, please try again"
+        messagebox.showinfo("LOGIN", message) 
+        
+    
+    else:
+        
+        message = "WELCOME " + name + "!"
+        messagebox.showinfo("LOGIN", message)
+    
 
 
 def register_window():
@@ -88,54 +120,57 @@ def insert():
     
     # if user not fill any entry
     # then print "empty input"
-    if (name_field.get() == "" and
-        email_field.get() == "" and
-        address_field.get() == "" and
-        gender_field.get() == "" and
+    if (name_field.get() == "" or
+        email_field.get() == "" or
+        address_field.get() == "" or
+        gender_field.get() == "" or
         phone_field.get() == ""):
-              
+        
+        messagebox.showinfo("Error", "Incomplete Input", icon = 'warning')      
         print("empty input")
   
     else:
   
-        # assigning the max row and max column
-        # value upto which data is written
-        # in an excel sheet to the variable
-        # current_row = sheet.max_row
-        # current_column = sheet.max_column
-  
-        # # get method returns current text
-        # # as string which we write into
-        # # excel spreadsheet at particular location
-        # sheet.cell(row=current_row + 1, column=1).value = name_field.get()
-        # sheet.cell(row=current_row + 1, column=2).value = email_field.get()
-        # sheet.cell(row=current_row + 1, column=3).value = address_field.get()
-        # sheet.cell(row=current_row + 1, column=4).value = gender_field.get()
-        # sheet.cell(row=current_row + 1, column=5).value = phone_field.get()
-        # sheet.cell(row=current_row + 1, column=6).value = email_id_field.get()
-        # sheet.cell(row=current_row + 1, column=7).value = address_field.get()
-        print(gender_field.get())
+
+        name = name_field.get()
+        email = email_field.get()
+        address = address_field.get()
+        gender = gender_field.get() 
+        phone = phone_field.get()
         
-        register_window()
+        #register_window()
         
-        timer_window()
-        
-        #root_win.destroy()
-        #root_win.update()
+        # timer_window()
         
         
-        name_field.focus_set()
+        MsgBox = messagebox.askquestion ('Verification','Is your personal information correct?',icon = 'warning')
+        if MsgBox == 'yes':
+            messagebox.showinfo("Registration Instruction", "Place your finger on the fingerprint sensor (5 times)")
+            
+            # Enroll Fingerprint
+            enroll_fingerprint()
+            fingerprint = convertToBinaryData("fingerprint_data.bin")
+            
+            insertdata(name, email, address, gender, phone, 
+               location, datetime.datetime.now(), fingerprint)
+            
+            messagebox.showinfo("Registration Status", "Registration Complete!")
+            
+            
+            name_field.focus_set()
+            
+            
+            
+            
+            clear() 
+
         
-        # call the clear() function
-        clear()
   
 
 def login_finger_process():
     global root_win
     
-    login_window()
-    
-    timer_window()
+    login_f()
     
     # Fingerprint Scanning here
     
@@ -146,7 +181,7 @@ if __name__ == "__main__":
     root = Tk()
   
     # set the background colour of GUI window
-    root.configure(background='light green')
+    root.configure(background='#E3F6F5')
   
     # set the title of GUI window
     root.title("CONTACT TRACING")
@@ -154,9 +189,12 @@ if __name__ == "__main__":
     # set the configuration of GUI window
     win_w = 1024
     win_h = 400
-    window_size= str(win_w) + "x" + str(win_h)
-    root.geometry(window_size)
-    root.attributes("-fullscreen", True) 
+    win_x = 0
+    win_y = 0
+    win_geom =  str(win_w) + "x" + str(win_h) + "+" + str(win_x) + "+" + str(win_y) 
+    
+    root.geometry(win_geom)
+    root.attributes("-fullscreen", False) 
     
     header_section =Frame(root,width=win_w,height=50,bg="#272343")
     header_section.place(x=0,y=0)
@@ -209,7 +247,18 @@ if __name__ == "__main__":
     phone_l.place(x= 10,y= 270-distance_y)
     
     # create a text entry box
+    def handle_click(event):
+        win_id = sp.getoutput("xdotool search --onlyvisible --name Keyboard")
+        move_cmd = "xdotool windowmove {} 0 425".format(win_id)
+        os.system(move_cmd)
+        move_cmd = "xdotool windowraise {}".format(win_id)
+        os.system(move_cmd)
+        print(move_cmd)
+    
+    
     name_field = Entry(register_section, width="46")
+    
+    
     email_field = Entry(register_section, width="46")
     address_field = Entry(register_section, width="46")
     
@@ -223,6 +272,12 @@ if __name__ == "__main__":
                         
     # gender_field = Entry(register_section, width="46")
     phone_field = Entry(register_section, width="46")
+
+    email_field.bind("<1>", handle_click)
+    address_field.bind("<1>", handle_click)
+    gender_field.bind("<1>", handle_click)
+    phone_field.bind("<1>", handle_click)
+    name_field.bind("<1>", handle_click)
 
     # Position Entry Box
     name_field.place(x= 100, y=30-distance_y)
@@ -238,6 +293,18 @@ if __name__ == "__main__":
     myFont = font.Font(family='Modern', size=15, weight='bold')
     submit['font'] = myFont
     
+    
+    #Start Keyboard
+    def d():
+        time.sleep(3)
+        os.system("matchbox-keyboard")
+        time.sleep(3)
+        print('s')
+
+    
+    d = threading.Thread(target=d)
+    d.setDaemon(True)
+    d.start()    
+    
     # start the GUI
     root.mainloop()
-    
