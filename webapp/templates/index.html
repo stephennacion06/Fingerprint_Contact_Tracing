@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Fingerprint Contact Tracing WebApp</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+
+
+
+#myInput {
+  background-image: url('static/search_3.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 50%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+#myTable {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+}
+
+#myTable th, #myTable td {
+  text-align: left;
+  padding: 12px;
+}
+
+#myTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable tr.header{
+  background-color: #BAE8E8;
+}
+
+  </style>
+</head>
+
+<body>
+
+  
+<div style="background-color: #272343;height: 10vh" >
+<h2 style="text-align:center;color:#FFFFFF; margin: 0;padding-top: 15px;">FINGERPRINT CONTACT TRACING SYSTEM</h2>
+</div>
+
+
+<div style="margin-top: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;">
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for Location.." title="Type in a Location">
+
+<button type="button" onclick="get_table()" class="btn btn-primary btn-lg" style="height: 49px;
+ background-color: #BAE8E8; color: #272343; border-color:#BAE8E8 ">SEND NOTIFICATION</button>
+
+<table style="color:#272343" id="myTable" class="table_class">
+
+  <tr class="header">
+    <th style="width:15%;">Resident No#</th>
+    <th style="width:15%;">Name</th>
+    <th style="width:15%;">Email</th>
+    <th style="width:15%;">Address</th>
+    <th style="width:15%;">Gender</th>
+    <th style="width:15%;">Contact No.</th>
+    <th style="width:15%;">Location Record</th>
+  </tr>
+    {%for list in lists%}
+  <tr>
+    <td>{{list[0]}}</td>
+    <td>{{list[1]}}</td>
+    <td>{{list[2]}}</td>
+    <td>{{list[3]}}</td>
+    <td>{{list[4]}}</td>
+    <td>{{list[5]}}</td>
+    <td>{{list[6]}}</td>
+
+  </tr>    
+  {%endfor%}
+
+
+</table>
+</div>
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+
+
+
+
+function get_table(){
+  var rows = [].slice.call($('table')[0].rows)
+
+  var keys = [].map.call(rows.shift().cells, function(e) {
+    return e.textContent.replace(/\s/g, '')
+  })
+
+  var result = rows.map(function(row) {
+    return [].reduce.call(row.cells, function(o, e, i) {
+      o[keys[i]] = e.textContent
+      return o
+    }, {})
+  })
+
+  console.log(result)
+}
+
+</script>
+
+
+</body>
+</html>
