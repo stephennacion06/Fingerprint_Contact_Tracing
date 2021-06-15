@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from database.db_modules import get_data
+import json
 
 app = Flask(__name__)
 
@@ -9,7 +10,7 @@ def index():
 
     lists = get_data()
 
-    return render_template('index.html', lists=lists)
+    return render_template('index.html', lists=json.dumps(lists))
 
 
 if __name__ == '__main__':

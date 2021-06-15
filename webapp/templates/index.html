@@ -22,23 +22,23 @@
   margin-bottom: 12px;
 }
 
-#myTable {
+#myTable_2 {
   border-collapse: collapse;
   width: 100%;
   border: 1px solid #ddd;
   font-size: 18px;
 }
 
-#myTable th, #myTable td {
+#myTable_2 th, #myTable td {
   text-align: left;
   padding: 12px;
 }
 
-#myTable tr {
+#myTable_2 tr {
   border-bottom: 1px solid #ddd;
 }
 
-#myTable tr.header{
+#myTable_2 tr.header{
   background-color: #BAE8E8;
 }
 
@@ -54,13 +54,14 @@
 
 
 <div style="margin-top: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;">
-<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for Location.." title="Type in a Location">
+<input type="text" id="myInput"  placeholder="Search for Location.." title="Type in a Location">
 
 <button type="button" onclick="get_table()" class="btn btn-primary btn-lg" style="height: 49px;
  background-color: #BAE8E8; color: #272343; border-color:#BAE8E8 ">SEND NOTIFICATION</button>
 
-<table style="color:#272343" id="myTable" class="table_class">
+<table style="color:#272343" id="myTable_2" class="table_class">
 
+<thead>
   <tr class="header">
     <th style="width:15%;">Resident No#</th>
     <th style="width:15%;">Name</th>
@@ -70,63 +71,74 @@
     <th style="width:15%;">Contact No.</th>
     <th style="width:15%;">Location Record</th>
   </tr>
-    {%for list in lists%}
-  <tr>
-    <td>{{list[0]}}</td>
-    <td>{{list[1]}}</td>
-    <td>{{list[2]}}</td>
-    <td>{{list[3]}}</td>
-    <td>{{list[4]}}</td>
-    <td>{{list[5]}}</td>
-    <td>{{list[6]}}</td>
+</thead>
 
-  </tr>    
-  {%endfor%}
+<tbody id="myTable">
 
+</tbody>
 
 </table>
 </div>
+
 <script>
-function myFunction() {
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("myTable");
-  tr = table.getElementsByTagName("tr");
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[1];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }       
-  }
+
+var myArray = {{lists|safe}};
+
+
+$('#myInput').on('keyup', function(){
+    var value = $(this).val()
+    var data = searchTable(value, myArray)
+    buildTable(data)
+
+})
+
+
+buildTable(myArray)
+
+function searchTable(value, data)
+{
+    var filteredData = []
+    for (var i=0; i < data.length; i++)
+    {
+        value = value.toLowerCase()
+        var plate_text = data[i][6].toLowerCase()
+
+        if (plate_text.includes(value))
+        {
+            filteredData.push(data[i])
+        }
+    }
+
+    return filteredData
+}
+
+
+function buildTable(data){
+    var table = document.getElementById('myTable')
+
+
+    table.innerHTML = ""
+    for (var i = 0; i < data.length; i++){
+        
+        var row = `<tr>
+                        <td>${data[i][0]}</td>
+                        <td>${data[i][1]}</td>
+                        <td>${data[i][2]}</td>
+                        <td>${data[i][3]}</td>
+                        <td>${data[i][4]}</td>
+                        <td>${data[i][5]}</td>
+                        <td>${data[i][6]}</td>
+                    </tr>`
+        table.innerHTML += row
+    }
 }
 
 
 
 
-function get_table(){
-  var rows = [].slice.call($('table')[0].rows)
-
-  var keys = [].map.call(rows.shift().cells, function(e) {
-    return e.textContent.replace(/\s/g, '')
-  })
-
-  var result = rows.map(function(row) {
-    return [].reduce.call(row.cells, function(o, e, i) {
-      o[keys[i]] = e.textContent
-      return o
-    }, {})
-  })
-
-  console.log(result)
-}
 
 </script>
+
 
 
 </body>
