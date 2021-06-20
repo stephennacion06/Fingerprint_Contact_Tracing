@@ -185,8 +185,8 @@ if __name__ == "__main__":
     root.title("CONTACT TRACING")
 
     # set the configuration of GUI window
-    win_w = 1024
-    win_h = 400
+    win_w = 800
+    win_h = 270
     win_x = 0
     win_y = 0
     win_geom = str(win_w) + "x" + str(win_h) + "+" + \
@@ -208,15 +208,15 @@ if __name__ == "__main__":
 
     # Register Section
     register_section = Frame(
-        root, width=win_w/2, height=350, bd=2, bg="#E3F6F5")
+        root, width=win_w/2, height=win_h, bd=2, bg="#E3F6F5")
     register_section.place(x=0, y=50)
 
     # Login Section
-    login_section = Frame(root, width=win_w/2, height=350, bd=2, bg="#E3F6F5")
+    login_section = Frame(root, width=win_w/2, height=win_h-50, bd=2, bg="#E3F6F5")
     login_section.place(x=win_w/2, y=50)
 
     login = Button(login_section, text="LOGIN", fg="#272343",
-                   bg="#BAE8E8", width=20, height=10, command=login_finger_process)
+                   bg="#BAE8E8", width=15, height=5, command=login_finger_process)
 
     myFont = font.Font(family='Modern', size=15, weight='bold')
     login['font'] = myFont
@@ -238,27 +238,29 @@ if __name__ == "__main__":
     phone_l = Label(register_section, text="PHONE", bg="#E3F6F5", fg="#272343")
 
     # Position Labels
-    distance_y = 25
 
-    name_l.place(x=10, y=30-distance_y)
-    email_l.place(x=10, y=90-distance_y)
-    address_l.place(x=10, y=150-distance_y)
-    gender_l.place(x=10, y=210-distance_y)
-    phone_l.place(x=10, y=270-distance_y)
+
+    name_l.place(x=10, y=15)
+    email_l.place(x=10, y=45)
+    address_l.place(x=10, y=75)
+    gender_l.place(x=10, y=105)
+    phone_l.place(x=10, y=135)
 
     # create a text entry box
     def handle_click(event):
         win_id = sp.getoutput("xdotool search --onlyvisible --name Keyboard")
-        move_cmd = "xdotool windowmove {} 0 425".format(win_id)
+        move_cmd = "xdotool windowmove {} 0 290".format(win_id)
         os.system(move_cmd)
         move_cmd = "xdotool windowraise {}".format(win_id)
         os.system(move_cmd)
         print(move_cmd)
 
-    name_field = Entry(register_section, width="46")
 
-    email_field = Entry(register_section, width="46")
-    address_field = Entry(register_section, width="46")
+    width_field = "36"
+    name_field = Entry(register_section, width=width_field)
+
+    email_field = Entry(register_section, width=width_field)
+    address_field = Entry(register_section, width=width_field)
 
     n = StringVar()
     gender_field = ttk.Combobox(register_section, width="10", textvariable=n)
@@ -269,7 +271,7 @@ if __name__ == "__main__":
                               )
 
     # gender_field = Entry(register_section, width="46")
-    phone_field = Entry(register_section, width="46")
+    phone_field = Entry(register_section, width=width_field)
 
     email_field.bind("<1>", handle_click)
     address_field.bind("<1>", handle_click)
@@ -278,16 +280,16 @@ if __name__ == "__main__":
     name_field.bind("<1>", handle_click)
 
     # Position Entry Box
-    name_field.place(x=100, y=30-distance_y)
-    email_field.place(x=100, y=90-distance_y)
-    address_field.place(x=100, y=150-distance_y)
-    gender_field.place(x=100, y=210-distance_y)
-    phone_field.place(x=100, y=270-distance_y)
+    name_field.place(x=100, y=15)
+    email_field.place(x=100, y=45)
+    address_field.place(x=100, y=75)
+    gender_field.place(x=100, y=105)
+    phone_field.place(x=100, y=135)
 
     # create a Submit Button and place into the root window
     submit = Button(register_section, text="REGISTER", fg="#272343",
-                    bg="#BAE8E8", width=31, height=1, command=insert)
-    submit.place(x=10, y=310-distance_y)
+                    bg="#BAE8E8", width=25, height=1, command=insert)
+    submit.place(x=10, y=165)
     myFont = font.Font(family='Modern', size=15, weight='bold')
     submit['font'] = myFont
 
@@ -300,7 +302,7 @@ if __name__ == "__main__":
         print('s')
 
     d = threading.Thread(target=d)
-    d.setDaemon(True)
+    d.setDaemon(False)
     d.start()
 
     # start the GUI

@@ -6,7 +6,7 @@ import datetime
 import os
 
 
-os.system("sudo chmod a+rw /dev/bus/usb/001/003")
+os.system("sudo chmod a+rw /dev/bus/usb/001/004")
 
 # fingerprint = convertToBinaryData("some_fingerprint.bin")
 
@@ -101,7 +101,7 @@ def verify_fingerprint():
 
             fprint.exit()
             
-            return False
+            return False,False
 
 # def enroll_fingerprint(name, email, address, gender, phone,  location_record):
     
