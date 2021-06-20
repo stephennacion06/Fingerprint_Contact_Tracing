@@ -10,7 +10,9 @@ def convertToBinaryData(filename):
 
 # fingerprint = convertToBinaryData("some_fingerprint.bin")
 
-db_name = 'Contact_Tracing.db'
+
+db_name = '/home/pi/Fingerprint_Contact_Tracing/Contact_Tracing.db'
+
 
 def start_db():
     try:
@@ -30,15 +32,16 @@ def start_db():
         if sqliteConnection:
             sqliteConnection.close()
             print("The SQLite connection is closed")
-            
+
+
 def get_row_total():
-    
+
     try:
         sqliteConnection = sqlite3.connect(db_name)
         cursor = sqliteConnection.cursor()
 
         sql_fetch_blob_query = """SELECT COUNT(*) from Contact"""
-        
+
         cursor.execute(sql_fetch_blob_query)
         cur_result = cursor.fetchone()
 
@@ -82,7 +85,8 @@ def start_table():
         if sqliteConnection:
             sqliteConnection.close()
             print("sqlite connection is closed")
-            
+
+
 def insertdata(name, email, address, gender, phone, location_record, date, fingerprint):
     try:
         id = get_row_total()+1
@@ -95,7 +99,8 @@ def insertdata(name, email, address, gender, phone, location_record, date, finge
         # empPhoto = convertToBinaryData(photo)
         # resume = convertToBinaryData(resumeFile)
         # Convert data into tuple format
-        data_tuple = (id,name, email, address, gender, phone, location_record, date, fingerprint)
+        data_tuple = (id, name, email, address, gender, phone,
+                      location_record, date, fingerprint)
         cursor.execute(sqlite_insert_blob_query, data_tuple)
         sqliteConnection.commit()
         print("Image and file inserted successfully as a BLOB into a table")
@@ -107,7 +112,7 @@ def insertdata(name, email, address, gender, phone, location_record, date, finge
         if sqliteConnection:
             sqliteConnection.close()
             print("the sqlite connection is closed")
-            
+
 
 def writeTofile(data, filename):
     # Convert binary data to proper format and write it on Hard Disk
@@ -115,20 +120,21 @@ def writeTofile(data, filename):
         file.write(data)
     print("Stored blob data into: ", filename, "\n")
 
+
 def get_fingerprint_data(id_num):
     try:
         sqliteConnection = sqlite3.connect(db_name)
         cursor = sqliteConnection.cursor()
 
         sql_fetch_blob_query = """SELECT * from Contact where id = ?"""
-        
+
         cursor.execute(sql_fetch_blob_query, (id_num,))
-        
+
         record = cursor.fetchall()
-        
+
         for row in record:
             # print("Id = ", row[0], "Name = ", row[1])
-            
+
             name = row[1]
             email = row[2]
             location = row[3]
@@ -149,20 +155,21 @@ def get_fingerprint_data(id_num):
         if sqliteConnection:
             sqliteConnection.close()
             return name, email, location, gender, contact_num, location_list, date
-           
+
+
 def save_fingerprint(id_num):
     try:
         sqliteConnection = sqlite3.connect(db_name)
         cursor = sqliteConnection.cursor()
 
         sql_fetch_blob_query = """SELECT fingerprint from Contact where id = ?"""
-        
+
         cursor.execute(sql_fetch_blob_query, (id_num,))
-        
+
         record = cursor.fetchall()
-        
-            
-        writeTofile(record[0][0], "fingerprint_data.bin")
+
+        writeTofile(
+            record[0][0], "/home/pi/Fingerprint_Contact_Tracing/fingerprint_data.bin")
 
         cursor.close()
 
@@ -175,15 +182,15 @@ def save_fingerprint(id_num):
 
 
 def get_list_fingerprint():
-    
+
     try:
         sqliteConnection = sqlite3.connect(db_name)
         sqliteConnection.row_factory = lambda cursor, row: row[0]
         cursor = sqliteConnection.cursor()
         sql_fetch_blob_query = """SELECT fingerprint from Contact"""
-        
+
         record = cursor.execute(sql_fetch_blob_query).fetchall()
-        
+
         cursor.close()
 
     except sqlite3.Error as error:
@@ -194,49 +201,50 @@ def get_list_fingerprint():
             sqliteConnection.close()
             return tuple(record)
 
-def update_location(id,location):
-    
+
+def update_location(id, location):
+
     try:
         sqliteConnection = sqlite3.connect(db_name)
         cursor = sqliteConnection.cursor()
 
-        sqlite_select_query = """SELECT location_record from Contact where id = {}""".format(id)
+        sqlite_select_query = """SELECT location_record from Contact where id = {}""".format(
+            id)
         cursor.execute(sqlite_select_query)
         records = cursor.fetchall()
-        
-        
+
         def Convert(string):
             li = list(string.split("~"))
             return li
-        
-        def listToString(s): 
-    
+
+        def listToString(s):
+
             # initialize an empty string
-            str1 = "~" 
-            
-            # return string  
+            str1 = "~"
+
+            # return string
             return (str1.join(s))
-        
+
         location_list = Convert(records[0][0])
-        
-        
+
         if location not in location_list:
-            
+
             print("Updating Location")
-            
-            location_list.append(location)    
+
+            location_list.append(location)
             location_string = listToString(location_list)
-        
-            sqlite_update_query = """Update Contact set location_record = '{}' where id = {}""".format(location_string,id)
+
+            sqlite_update_query = """Update Contact set location_record = '{}' where id = {}""".format(
+                location_string, id)
             cursor.execute(sqlite_update_query)
             sqliteConnection.commit()
-        
+
         print("Updating Time in")
-        
-        sqlite_update_query = """Update Contact set date = '{}' where id = {}""".format(datetime.datetime.now(),id)
+
+        sqlite_update_query = """Update Contact set date = '{}' where id = {}""".format(
+            datetime.datetime.now(), id)
         cursor.execute(sqlite_update_query)
         sqliteConnection.commit()
-
 
         cursor.close()
 
@@ -246,5 +254,3 @@ def update_location(id,location):
         if sqliteConnection:
             sqliteConnection.close()
             print("The SQLite connection is closed")
-
-    

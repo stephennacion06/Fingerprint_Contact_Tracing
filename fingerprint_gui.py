@@ -27,7 +27,7 @@ root_win = None
 
 
 # Edit node_location.txt for each Node Devices
-with open('node_location.txt') as f:
+with open('/home/pi/Fingerprint_Contact_Tracing/node_location.txt') as f:
     location = f.readline()
 
 
@@ -51,7 +51,7 @@ def login_f():
     global root_win
 
     download_from_firebase('database/Contact_Tracing.db',
-                           'Contact_Tracing.db')
+                           '/home/pi/Fingerprint_Contact_Tracing/Contact_Tracing.db')
 
     messagebox.showinfo("LOGIN", "Place your finger on the fingerprint sensor")
 
@@ -68,41 +68,6 @@ def login_f():
 
         message = "WELCOME " + name + "!"
         messagebox.showinfo("LOGIN", message)
-
-
-def register_window():
-    global root_win
-
-    root_win = tk.Toplevel(bg="black")
-    root_win.geometry("1024x350+0+50")
-    root_win.overrideredirect(1)
-    # root = tk.Tk()
-    lbl = ImageLabel(root_win)
-    lbl.pack()
-    lbl.load('animations/ready_for_scan.gif')
-
-    label_instruction = tk.Label(root_win, text="Place your finger on the fingerprint sensor for 5 times",
-                                 bg="black", fg="white")
-    Font_tuple = ("Modern", 15, "bold")
-    label_instruction.config(font=Font_tuple)
-    label_instruction.pack()
-
-
-def login_window():
-    global root_win
-
-    root_win = tk.Toplevel(bg="black")
-    root_win.geometry("1024x350+0+50")
-    root_win.overrideredirect(1)
-    lbl = ImageLabel(root_win)
-    lbl.pack()
-    lbl.load('animations/ready_for_scan.gif')
-
-    label_instruction = tk.Label(root_win, text="Place your finger on the fingerprint sensor",
-                                 bg="black", fg="white")
-    Font_tuple = ("Modern", 15, "bold")
-    label_instruction.config(font=Font_tuple)
-    label_instruction.pack()
 
 
 def clear():
@@ -149,7 +114,8 @@ def insert():
 
             # Enroll Fingerprint
             enroll_fingerprint()
-            fingerprint = convertToBinaryData("fingerprint_data.bin")
+            fingerprint = convertToBinaryData(
+                "/home/pi/Fingerprint_Contact_Tracing/fingerprint_data.bin")
 
             insertdata(name, email, address, gender, phone,
                        location, datetime.datetime.now(), fingerprint)
@@ -158,7 +124,7 @@ def insert():
                                 "Registration Complete!")
 
             upload_to_firebase('database/Contact_Tracing.db',
-                               'Contact_Tracing.db')
+                               '/home/pi/Fingerprint_Contact_Tracing/Contact_Tracing.db')
 
             name_field.focus_set()
 
@@ -212,7 +178,8 @@ if __name__ == "__main__":
     register_section.place(x=0, y=50)
 
     # Login Section
-    login_section = Frame(root, width=win_w/2, height=win_h-50, bd=2, bg="#E3F6F5")
+    login_section = Frame(root, width=win_w/2,
+                          height=win_h-50, bd=2, bg="#E3F6F5")
     login_section.place(x=win_w/2, y=50)
 
     login = Button(login_section, text="LOGIN", fg="#272343",
@@ -239,7 +206,6 @@ if __name__ == "__main__":
 
     # Position Labels
 
-
     name_l.place(x=10, y=15)
     email_l.place(x=10, y=45)
     address_l.place(x=10, y=75)
@@ -254,7 +220,6 @@ if __name__ == "__main__":
         move_cmd = "xdotool windowraise {}".format(win_id)
         os.system(move_cmd)
         print(move_cmd)
-
 
     width_field = "36"
     name_field = Entry(register_section, width=width_field)
