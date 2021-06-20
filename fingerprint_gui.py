@@ -57,15 +57,13 @@ def login_f():
 
     name, id = verify_fingerprint()
 
-    update_location(id, location)
-
     if name is False:
 
         message = "Fingerprint not recognized, please try again"
         messagebox.showinfo("LOGIN", message)
 
     else:
-
+        update_location(id, location)
         message = "WELCOME " + name + "!"
         messagebox.showinfo("LOGIN", message)
 
