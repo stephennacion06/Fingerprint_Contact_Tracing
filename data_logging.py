@@ -1,0 +1,31 @@
+import logging
+from os import path
+import datetime
+
+
+# importing the module
+
+
+def log_data(name):
+    with open('node_location.txt') as f:
+        location = f.readline()
+
+    time_now = datetime.datetime.now().date()
+
+    log_file = "logs/{0}-{1}.log".format(location, str(time_now))
+
+    # now we will Create and configure logger
+    logging.basicConfig(filename=log_file,
+                        format='%(message)s - %(asctime)s',
+                        filemode='a')
+
+    # Let us Create an object
+    logger = logging.getLogger()
+
+    # Now we are going to Set the threshold of logger to DEBUG
+    logger.setLevel(logging.DEBUG)
+
+    logger.info(name)
+
+
+log_data("Stephen")

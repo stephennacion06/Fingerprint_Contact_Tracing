@@ -23,6 +23,8 @@ import subprocess as sp
 
 from firebase_modules import upload_to_firebase, download_from_firebase
 
+from data_logging import log_data
+
 root_win = None
 
 
@@ -63,6 +65,9 @@ def login_f():
         messagebox.showinfo("LOGIN", message)
 
     else:
+
+        log_data(name)
+
         update_location(id, location)
         message = "WELCOME " + name + "!"
         messagebox.showinfo("LOGIN", message)
