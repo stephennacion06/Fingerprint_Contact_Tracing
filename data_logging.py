@@ -1,5 +1,4 @@
 import logging
-from os import path
 import datetime
 
 
@@ -7,12 +6,13 @@ import datetime
 
 
 def log_data(name):
-    with open('node_location.txt') as f:
+    with open('/home/pi/Fingerprint_Contact_Tracing/node_location.txt') as f:
         location = f.readline()
 
     time_now = datetime.datetime.now().date()
 
-    log_file = "logs/{0}-{1}.log".format(location, str(time_now))
+    log_file = "/home/pi/Fingerprint_Contact_Tracing/logs/{0}-{1}.log".format(
+        location, str(time_now))
 
     # now we will Create and configure logger
     logging.basicConfig(filename=log_file,
@@ -26,6 +26,3 @@ def log_data(name):
     logger.setLevel(logging.DEBUG)
 
     logger.info(name)
-
-
-log_data("Stephen")
