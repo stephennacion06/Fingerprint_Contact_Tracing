@@ -19,12 +19,19 @@ def upload_to_firebase(path_on_cloud, path_local):
 
 def download_from_firebase(path_on_cloud, path_local):
 
-    storage.child(path_on_cloud).download(path_local)
+    storage.child(path_on_cloud).download(path_on_cloud, "webapp/database/Contact_Tracing.db")
     print('Updating database')
 
 
+
+if __name__ == "__main__":
+    
 # upload_to_firebase('database/Contact_Tracing.db',
 #                    'webapp/database/Contact_Tracing.db')
 
-# download_from_firebase('database/Contact_Tracing.db',
-#                        'webapp/database/Contact_Tracing.db')
+    # download_from_firebase('database/Contact_Tracing.db',
+    #                     r'webapp\database\')
+    
+    # storage.child('database/Contact_Tracing.db').download(path="database/Contact_Tracing.db", filename="webapp/database/Contact_Tracing.db")
+
+    upload_to_firebase('database/Contact_Tracing.db', 'webapp/database/update/Contact_Tracing.db')

@@ -2,9 +2,6 @@ import logging
 import datetime
 
 
-# importing the module
-
-
 def log_data(name):
     with open('/home/pi/Fingerprint_Contact_Tracing/node_location.txt') as f:
         location = f.readline()

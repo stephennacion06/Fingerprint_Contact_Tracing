@@ -10,7 +10,7 @@ app = Flask(__name__)
 def index():
 
     download_from_firebase('database/Contact_Tracing.db',
-                           'webapp/database/Contact_Tracing.db')
+                           'webapp/database/')
 
     lists = get_data()
 
